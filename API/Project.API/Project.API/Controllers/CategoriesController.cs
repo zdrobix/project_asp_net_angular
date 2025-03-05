@@ -17,7 +17,7 @@ namespace Project.API.Controllers
 		public CategoriesController(ICategoryRepository categoryRepository) =>
 			this.categoryRepository = categoryRepository;
 
-        //
+        // POST 
         [HttpPost] 
 		public async Task<IActionResult> CreateCategory(CreateCategoryRequestDto request)
 		{
