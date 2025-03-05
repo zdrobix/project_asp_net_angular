@@ -14,10 +14,8 @@ namespace Project.API.Controllers
 	{
 		private readonly ICategoryRepository categoryRepository;
 
-		public CategoriesController(ICategoryRepository categoryRepository)
-        {
+		public CategoriesController(ICategoryRepository categoryRepository) =>
 			this.categoryRepository = categoryRepository;
-		}
 
         //
         [HttpPost] 
@@ -58,6 +56,63 @@ namespace Project.API.Controllers
 			});
 
 			return Ok(response);
+		}
+
+		// GET: https://localhost:7179/api/categories/{id}
+		[HttpGet]
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> GetCategoryById([FromRoute]Guid id) 
+		{
+			var existingCategory = await categoryRepository.GetById(id);
+
+			return existingCategory == null ? 
+				NotFound() : Ok(new CategoryDto
+								{
+									Id = existingCategory.Id,
+									Name = existingCategory.Name,
+									UrlHandle = existingCategory.UrlHandle
+								});
+		}
+
+		// PUT : https://localhost:7179/api/categories/{id}
+		[HttpPut]
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, UpdateCategoryRequestDto request)
+		{
+			var category = new Category
+			{
+				Id = id,
+				Name = request.Name,
+				UrlHandle = request.UrlHandle
+			};
+
+			category = await categoryRepository.UpdateAsync(category);
+
+			if (category == null)
+				return NotFound();
+
+			// domain model -> dto
+			return Ok(new CategoryDto
+			{
+				Id = category.Id,
+				Name = category.Name,
+				UrlHandle = category.UrlHandle
+			});
+		}
+
+		// DELETE : https://localhost:7179/api/categories/{id}
+		[HttpDelete]
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
+		{
+			var category = await categoryRepository.DeleteAsync(id);
+
+			return category == null ? NotFound() : Ok(new CategoryDto
+														{
+															Id = category.Id,
+															Name = category.Name,
+															UrlHandle = category.UrlHandle
+														});
 		}
 	}
 }
