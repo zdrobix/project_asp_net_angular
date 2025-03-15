@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Project.API.Data;
 using Project.API.Models.Domain;
 using Project.API.Repositories.Interface;
@@ -21,5 +22,11 @@ namespace Project.API.Repositories.Implementation
 
 			return blogPost;
 		}
+
+		public async Task<IEnumerable<BlogPost>> GetAllAsync() =>
+			await dbContext.BlogPosts.Include(x => x.Categories).ToListAsync();
+
+		public async Task<BlogPost?> GetByIdAsync(Guid id) =>
+			await dbContext.BlogPosts.Include(x => x.Categories).FirstOrDefaultAsync(x => x.Id == id);
 	}
 }
