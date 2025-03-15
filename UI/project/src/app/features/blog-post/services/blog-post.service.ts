@@ -14,4 +14,12 @@ export class BlogPostService {
   createBlogPost(data: AddBlogPost) : Observable<BlogPost>{
     return this.http.post<BlogPost>(`https://localhost:7179/api/blogposts`, data);
   }
+
+  getAllBlogPosts(): Observable<BlogPost[]> {
+    return this.http.get<BlogPost[]>(`https://localhost:7179/api/blogposts`);
+  }
+
+  getBlogPostById(id: string): Observable<BlogPost> {
+    return this.http.get<BlogPost>(`https://localhost:7179/api/blogposts/${id}`);
+  }
 }
