@@ -3,6 +3,7 @@ import { AddBlogPost } from '../models/add-blogpost.model';
 import { Observable } from 'rxjs/internal/Observable';
 import { BlogPost } from '../models/blogpost.model';
 import { HttpClient } from '@angular/common/http';
+import { UpdateBlogPost } from '../models/update-blogpost.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +22,13 @@ export class BlogPostService {
 
   getBlogPostById(id: string): Observable<BlogPost> {
     return this.http.get<BlogPost>(`https://localhost:7179/api/blogposts/${id}`);
+  }
+
+  updateBlogPost(id: string, updatedBlogPost: UpdateBlogPost): Observable<BlogPost> {
+    return this.http.put<BlogPost>(`https://localhost:7179/api/blogposts/${id}`, updatedBlogPost);
+  }
+
+  deleteBlogPost(id: string): Observable<BlogPost> {
+    return this.http.delete<BlogPost>(`https://localhost:7179/api/blogpost/${id}`);
   }
 }

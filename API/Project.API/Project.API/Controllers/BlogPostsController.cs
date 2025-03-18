@@ -135,5 +135,83 @@ namespace Project.API.Controllers
 					}).ToList()
 			});
 		}
+
+		// PUT: https://localhost:7179/api/blogposts/{id}
+		[HttpPut]
+		[Route("{id:Guid}")]
+		public async Task<IActionResult> UpdateBlogPostById([FromRoute]Guid id, UpdateBlogPostRequestDto request)
+		{
+			// dto -> domain model
+			var blogpost = new BlogPost
+			{
+				Id = id,
+				Title = request.Title,
+				Content = request.Content,
+				FeaturedImageUrl = request.FeaturedImageUrl,
+				PublishedDate = request.PublishedDate,
+				UrlHandle = request.UrlHandle,
+				Author = request.Author,
+				IsVisible = request.IsVisible,
+				ShortDescription = request.ShortDescription,
+				Categories = new List<Category>()
+			};
+
+			foreach (var categoryGuid in request.Categories)
+			{
+				var category = await categoryRepository.GetById(categoryGuid);
+				if (category != null) 
+					blogpost.Categories.Add(category);
+			}
+
+			var updatedBlogpost = await blogPostRepository.UpdateAsync(blogpost);
+			if (updatedBlogpost == null)
+				return NotFound();
+
+			return Ok(
+				new BlogPostDto
+				{
+					Id = blogpost.Id,
+					Author = blogpost.Author,
+					Content = blogpost.Content,
+					PublishedDate = blogpost.PublishedDate,
+					FeaturedImageUrl = blogpost.FeaturedImageUrl,
+					IsVisible = blogpost.IsVisible,
+					Title = blogpost.Title,
+					ShortDescription = blogpost.ShortDescription,
+					UrlHandle = blogpost.UrlHandle,
+					Categories = blogpost.Categories.Select(category =>
+						new CategoryDto
+						{
+							Id = category.Id,
+							Name = category.Name,
+							UrlHandle = category.UrlHandle
+						}).ToList()
+				}
+			);
+		}
+
+		// DELETE: https://localhost:7179/api/blogposts/{id}
+		[HttpDelete]
+		[Route("{id:guid}")]
+		public async Task<IActionResult> DeleteBlogPost([FromRoute]Guid id)
+		{
+			var blogpost = await blogPostRepository.DeleteAsync(id);
+			if (blogpost == null)
+				return NotFound();
+			return Ok(
+					new BlogPostDto
+					{
+						Id = blogpost.Id,
+						Author = blogpost.Author,
+						Content = blogpost.Content,
+						PublishedDate = blogpost.PublishedDate,
+						FeaturedImageUrl = blogpost.FeaturedImageUrl,
+						IsVisible = blogpost.IsVisible,
+						Title = blogpost.Title,
+						ShortDescription = blogpost.ShortDescription,
+						UrlHandle = blogpost.UrlHandle
+					}
+			);
+		}
 	}
 }
