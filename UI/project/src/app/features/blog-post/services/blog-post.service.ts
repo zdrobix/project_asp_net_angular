@@ -24,11 +24,15 @@ export class BlogPostService {
     return this.http.get<BlogPost>(`https://localhost:7179/api/blogposts/${id}`);
   }
 
+  getBlogPostByUrlHandle(urlHandle: string): Observable<BlogPost> {
+    return this.http.get<BlogPost>(`https://localhost:7179/api/blogposts/${urlHandle}`);
+  }
+
   updateBlogPost(id: string, updatedBlogPost: UpdateBlogPost): Observable<BlogPost> {
     return this.http.put<BlogPost>(`https://localhost:7179/api/blogposts/${id}`, updatedBlogPost);
   }
 
   deleteBlogPost(id: string): Observable<BlogPost> {
-    return this.http.delete<BlogPost>(`https://localhost:7179/api/blogpost/${id}`);
+    return this.http.delete<BlogPost>(`https://localhost:7179/api/blogposts/${id}`);
   }
 }

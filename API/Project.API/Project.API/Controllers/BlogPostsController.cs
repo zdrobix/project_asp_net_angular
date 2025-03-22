@@ -136,6 +136,35 @@ namespace Project.API.Controllers
 			});
 		}
 
+		// GET: https://localhost:7179/api/blogposts{urlHandle}
+		[HttpGet]
+		[Route("{urlHandle}")]
+		public async Task<IActionResult> GetBlogPostByUrl([FromRoute]string urlHandle)
+		{
+			var blogPost = await blogPostRepository.GetByUrlHandleAsync(urlHandle);
+			if (blogPost == null)
+				return NotFound();
+			return Ok(new BlogPostDto
+			{
+				Id = blogPost.Id,
+				Author = blogPost.Author,
+				Content = blogPost.Content,
+				PublishedDate = blogPost.PublishedDate,
+				FeaturedImageUrl = blogPost.FeaturedImageUrl,
+				IsVisible = blogPost.IsVisible,
+				Title = blogPost.Title,
+				ShortDescription = blogPost.ShortDescription,
+				UrlHandle = blogPost.UrlHandle,
+				Categories = blogPost.Categories.Select(category =>
+					new CategoryDto
+					{
+						Id = category.Id,
+						Name = category.Name,
+						UrlHandle = category.UrlHandle
+					}).ToList()
+			});
+		}
+
 		// PUT: https://localhost:7179/api/blogposts/{id}
 		[HttpPut]
 		[Route("{id:Guid}")]

@@ -52,5 +52,8 @@ namespace Project.API.Repositories.Implementation
 
 			return blogpost;
 		}
-	}
+
+		public async Task<BlogPost?> GetByUrlHandleAsync(string urlHandle) =>
+			await dbContext.BlogPosts.Include(x => x.Categories).FirstOrDefaultAsync(x => x.UrlHandle == urlHandle);
+	}	
 }
